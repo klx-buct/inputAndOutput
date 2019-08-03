@@ -11,83 +11,55 @@
 3. 正常使用readline\print写代码即可
 # 例子
 - [牛牛找工作](https://www.nowcoder.com/practice/46e837a4ea9144f5ad2021658cb54c4d?tpId=98&tqId=32824&tPage=1&rp=1&ru=/ta/2019test&qru=/ta/2019test/question-ranking)
-- index.js(运行通过代码复制于牛客网**一碗凉皮2020**兄弟)
+- index.js
     ```js
     const input = require('./input');
     let readline = input.readline;
     let print = input.print;
 
 
-    function findMaxPi(numM,workDP,datas){
-        let outside = [];
-        let work = new Map();
-        let a = [];
-        //workDP.sort((a,b)=>a[0]-b[0]);
-        //for(let i=1;i<workDP.length;i++){
-            //workDP[i][1] = Math.max(workDP[i-1][1],workDP[i][1]);
-        //}
-        let len = workDP.length;
-        for(let i=0;i<workDP.length;i++){
-            work.set(parseInt(workDP[i][0]),parseInt(workDP[i][1]));
-            a[i] = parseInt(workDP[i][0]);
-        }
-        let lenD = datas.length;
-        for (let j = 0; j < lenD; j++) {
-            a[len+j] = datas[j];
-            if(!work.has(datas[j])){
-                work.set(datas[j],0);
-            }
-        }
-        a.sort((a,b)=>a-b);
-        let maxData = 0;
-        for (let k = 0; k < len+lenD; k++) {
-            maxData = Math.max(maxData, work.get(a[k]));
-            work.set(a[k],maxData);
-        }
-        for (let j = 0; j < lenD; j++) {
-            outside.push(work.get(datas[j]));
-        }
-        return outside;
-    }
-    
-    
-    let j=0;
-    let numN,numM,initData;
-    while(!j){
-        let datasOne=readline().split(' ');
-        if(datasOne.length>=2){
-            initData = datasOne;
-            numN = parseInt(initData[0]);
-            numM = parseInt(initData[1]);
-            j++;
-        }
-    }
-    
-    let workDP = [];
-    let i=0;
-    while(i<numN){
-        let tempData=readline().split(' ');
-        if(tempData.length>=2){
-            workDP.push([parseInt(tempData[0]),parseInt(tempData[1])]);
+    let M, N, i=0, Di = [], Pi = {};
+    let line = readline().split(' ');
+    N = parseInt(line[0]);
+    M = parseInt(line[1]);
+    while(i < N) {
+        line = readline().split(' ');
+        if(line.length >= 2) {
+            Di[i] = parseInt(line[0]);
+            Pi[Di[i]] = parseInt(line[1]);
             i++;
         }
     }
-    let state=0;
-    let datas = [];
-    while(!state){
-        let dataDis= readline().split(' ');
-        if(dataDis.length>=numM){
-        state = 1;
-            for(let j=0;j<numM;j++){
-                datas.push(parseInt(dataDis[j]));
-            }
+    updatePi();
+    while(true) {
+        line = readline().split(' ');
+        if(line.length === M) {
+            break;
         }
     }
-    
-    
-    let outside = findMaxPi(numM,workDP,datas);
-    for(let k=0;k<outside.length;k++){
-        print(outside[k]);
+    for(let i = 0, len = line.length; i < len; i++) {
+        console.log(findMax( parseInt(line[i]) , Pi, Di));
+    }
+    function updatePi() {
+        Di.sort((a, b) => a-b);
+        for(let i = 0, len = Di.length; i < len; i++) {
+            Pi[Di[i]] = i===0 || Pi[Di[i]] >= Pi[Di[i-1]] ? Pi[Di[i]] : Pi[Di[i-1]];
+        }
+    }
+    function findMax(Ai, Pi, Di) {
+        let beg = 0, end = Di.length-1;
+        while(beg<=end) {
+            let mid = parseInt((beg+end)/2);
+            if(Ai === Di[mid]) return Pi[Di[mid]];
+            
+            if(Ai < Di[mid]) {
+                end = mid-1;
+            }else {
+                beg = mid+1;
+            }
+        }
+        if(beg === 0) return 0;
+        return Pi[Di[beg-1]];
     }
     ```
 - input.txt
